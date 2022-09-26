@@ -30,7 +30,7 @@
         <div class="envio">
             <div>Mensagem: <input type="text" placeholder="(Opcional) Deixe uma mensagem para o vendendor..."></div>
             <div class="opcaoDeEnvio">Opção de envio:</div>
-            <div>Entrega Padrão <div class="card-subtitle mb-2 text-muted">Receba entre 24 de a 6 de
+            <div>Entrega Padrão <div class="card-subtitle mb-2 text-muted">Receba entre {{firstDayFomated()}} de  {{firstMonthFomated()}} a {{lastDayFomated()}} de  {{lastMonthFomated()}}
                 </div>
             </div>
             <div>
@@ -57,7 +57,7 @@
         </div>
         <v-container style="height: 100px;">
             <v-snackbar v-model="snackbar" :vertical="vertical" fixed center color="success">
-                <span>Produto removido!</span>
+                <span>Pedido realizado com sucesso!</span>
                 <v-icon dark>
                     mdi-checkbox-marked-circle
                 </v-icon>
@@ -79,7 +79,7 @@ export default {
             totalProduct: [],
             frete: 22.89,
             moedas: 60,
-            totalSubtotal: [],
+            totalSubtotal: []
         };
     },
     mounted() {
@@ -87,6 +87,57 @@ export default {
         this.subtotal();
     },
     methods: {
+        firstDayFomated(){
+            let dateDay = new Date()
+            let otherDay = new Date();
+            otherDay.setDate(dateDay.getDate() + 9); //
+            let local = otherDay.getDate()
+            return local;
+        },
+        lastDayFomated(){
+            let dateDay = new Date()
+            let otherDay = new Date();
+            otherDay.setDate(dateDay.getDate() + 15); // Adiciona  dias ao mês
+            let local = otherDay.getDate()
+            return local;
+        },
+        firstMonthFomated(){
+            let dateMonth = new Date().toLocaleString('pt-br', {month: 'long'});
+            if(this.firstDayFomated() > 0 ){
+            let time = new Date();
+            let outraData = new Date();
+            outraData.setDate(time.getDate() + 31); // Adiciona 30 dias ao mês
+            let local = outraData.toLocaleString('pt-br', {month: 'long'});
+            console.log(local)
+            return local;
+            } else {
+                console.log(dateMonth)
+                return dateMonth
+            }
+
+        },
+        lastMonthFomated(){
+
+            let dateMonth = new Date().toLocaleString('pt-br', {month: 'long'});
+            if(this.firstDayFomated() >  0 ){
+            let time = new Date();
+            let outraData = new Date();
+            outraData.setDate(time.getDate() + 44); // Adiciona 30 dias ao mês
+            let local = outraData.toLocaleString('pt-br', {month: 'long'});
+            console.log(local)
+            return local;
+            } else {
+                console.log(dateMonth)
+                return dateMonth
+            }
+
+            // let time = new Date();
+            // let outraData = new Date();
+            // outraData.setDate(time.getDate() + 31); // Adiciona 30 dias ao mês
+            // let local = outraData.toLocaleString('pt-br', {month: 'long'});
+            // return local;
+
+        },
         total() {
             const value = this.$store.state.cart;
             const totalProducts = value.map(cart => cart.price * cart.qty + this.frete);
@@ -134,7 +185,7 @@ export default {
     border-left-style: solid;
     border-left-color: gray;
     padding: 10px;
-    color: aqua;
+    color: rgb(255, 60, 0);
 
 }
 
