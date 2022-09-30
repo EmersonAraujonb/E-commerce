@@ -46,6 +46,11 @@ export default {
         'mdi-twitter',
         'mdi-linkedin',
         'mdi-instagram',
+        'mdi-whatsapp',
+        'mdi-snapchat',
+        'mdi-twitch',
+        'mdi-pinterest',
+        'mdi-youtube'
       ],
     }
 }

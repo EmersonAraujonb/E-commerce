@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <v-card class="overflow-hidden">
-      <v-app-bar absolute color="white">
+      <v-app-bar fixed color="white">
 
         <v-toolbar-title>
           <router-link to="/"><img src=".././assets/infinity.png" alt="logo" class="logo" /></router-link>
@@ -190,7 +190,7 @@ export default {
         },
         {
           id: 13,
-          title: "Camiseta Nike Chicago Bulls Logo Masculina",
+          title: "Camiseta Chicago Bulls Logo Masculina",
           price: 159.99,
           category: "Basquete / Casual",
           url: require("../../static/camiseta-nike-chicago-bulls-logo-masculina.jpg"),
@@ -198,7 +198,7 @@ export default {
         },
         {
           id: 14,
-          title: "Plus Size - Shorts Nike Icon Clash Feminino",
+          title: "Plus Size - Shorts Icon Clash Feminino",
           price: 109.99,
           category: "Corrida",
           url: require("../../static/plus-size-shorts-nike-icon-clash-feminino.jpg"),
@@ -222,7 +222,7 @@ export default {
         },
         {
           id: 17,
-          title: "Camiseta Nike UV Hydroguard Feminina",
+          title: "Camiseta UV Hydroguard Feminina",
           price: 99.90,
           category: "Casual & Praia",
           url: require("../../static/camiseta-nike-UV-hydroguard-feminina.jpg"),
@@ -246,7 +246,7 @@ export default {
         },
         {
           id: 20,
-          title: "Shorts Nike Dri-FIT Academy Feminino",
+          title: "Shorts Dri-FIT Academy Feminino",
           price: 49.90,
           category: "Futebol",
           url: require("../../static/shorts-nike-dri-fit-academy-feminino.jpg"),
@@ -262,29 +262,29 @@ export default {
         },
         {
           id: 22,
-          title: "Shorts Nike Sportswear Flow Masculino",
+          title: "Shorts Sportswear Flow Masculino",
           price: 179.99,
           category: "Casual",
           url: require("../../static/shorts-nike-sportswear-flow-masculino.jpg"),
           checked: false
         }
-      ],
-
-    };
+      ]
+    }
+  
   },
   components: {
     Footer
   },
   computed: {
     itemsFiltered() {
-      let valores = [];
-      valores = this.products.filter((product) => {
+      let values = [];
+      values = this.products.filter((product) => {
         return (
           product.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1 ||
           product.category.toLowerCase().indexOf(this.search.toLowerCase()) > -1
         );
       });
-      return valores;
+      return values;
     }
   },
   methods: {

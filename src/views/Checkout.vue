@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div>
-                <p class="fretes">R${{this.frete}}</p>
+                <p class="fretes">R${{this.shipping}}</p>
             </div>
         </div>
         <div class="totalItems">
@@ -60,11 +60,11 @@
 
         </div>
         <hr>
-        <p class="moedasEcommerce">Moedas Ecommerce Infinity a serem ganhas <i class="moedas">{{moedas}} Moedas</i></p>
+        <p class="moedasEcommerce">Moedas Ecommerce Infinity a serem ganhas <i class="moedas">{{coins}} Moedas</i></p>
         <hr>
         <div class="subtotal">
             <p class="one">Subtotal dos Produtos: <span class="four">{{totalSubtotal}}</span></p>
-            <p class="two">Total de envio: <span class="five">R${{frete}}</span></p>
+            <p class="two">Total de envio: <span class="five">R${{shipping}}</span></p>
             <p class="tree">Pagamento Total: <span class="six">{{totalProduct}} </span></p>
         </div>
         <v-container style="height: 100px;">
@@ -92,8 +92,8 @@ export default {
             snackbar: false,
             vertical: true,
             totalProduct: [],
-            frete: 22.89,
-            moedas: 60,
+            shipping: 22.89,
+            coins: 60,
             totalSubtotal: []
         };
     },
@@ -112,26 +112,26 @@ export default {
         firstDayFomated() {
             let dateDay = new Date()
             let otherDay = new Date();
-            otherDay.setDate(dateDay.getDate() + 9); //
+            otherDay.setDate(dateDay.getDate() + 9); // Adiciona 9 dias ao mês
             let local = otherDay.getDate()
             return local;
         },
         lastDayFomated() {
             let dateDay = new Date()
             let otherDay = new Date();
-            otherDay.setDate(dateDay.getDate() + 15); // Adiciona  dias ao mês
-            let local = otherDay.getDate()
-            return local;
+            otherDay.setDate(dateDay.getDate() + 15); // Adiciona 15 dias ao mês
+            let place = otherDay.getDate()
+            return place;
         },
         firstMonthFomated() {
             let dateMonth = new Date().toLocaleString('pt-br', { month: 'long' });
             if (this.firstDayFomated() > 0) {
                 let time = new Date();
-                let outraData = new Date();
-                outraData.setDate(time.getDate() + 31); // Adiciona 30 dias ao mês
-                let local = outraData.toLocaleString('pt-br', { month: 'long' });
-                console.log(local)
-                return local;
+                let anotherDate = new Date();
+                anotherDate.setDate(time.getDate() + 31); // Adiciona 31 dias ao mês
+                let place = anotherDate.toLocaleString('pt-br', { month: 'long' });
+                console.log(place)
+                return place;
             } else {
                 console.log(dateMonth)
                 return dateMonth
@@ -143,28 +143,21 @@ export default {
             let dateMonth = new Date().toLocaleString('pt-br', { month: 'long' });
             if (this.firstDayFomated() > 0) {
                 let time = new Date();
-                let outraData = new Date();
-                outraData.setDate(time.getDate() + 44); // Adiciona 30 dias ao mês
-                let local = outraData.toLocaleString('pt-br', { month: 'long' });
-                console.log(local)
-                return local;
+                let anotherDate = new Date();
+                anotherDate.setDate(time.getDate() + 44); // Adiciona 44 dias ao mês
+                let place = anotherDate.toLocaleString('pt-br', { month: 'long' });
+                console.log(place)
+                return place;
             } else {
                 console.log(dateMonth)
                 return dateMonth
             }
-
-            // let time = new Date();
-            // let outraData = new Date();
-            // outraData.setDate(time.getDate() + 31); // Adiciona 30 dias ao mês
-            // let local = outraData.toLocaleString('pt-br', {month: 'long'});
-            // return local;
-
         },
         total() {
             const value = this.$store.state.cart;
-            const totalProducts = value.map(cart => cart.price * cart.qty + this.frete);
-            const total = totalProducts.reduce((acc, p) => acc + p);
-            this.totalProduct = total.toLocaleString("pt-br", { style: "currency", currency: "BRL" });
+            const totalProducts = value.map(cart => cart.price * cart.qty + this.shipping);
+            const place = totalProducts.reduce((acc, p) => acc + p);
+            this.totalProduct = place.toLocaleString("pt-br", { style: "currency", currency: "BRL" });
         },
         subtotal() {
             let values = this.$store.state.cart;
