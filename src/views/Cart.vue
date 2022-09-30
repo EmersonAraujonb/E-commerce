@@ -61,7 +61,7 @@
           type="checkbox"
           name="checkbox"
           :checked="car.checked"
-          @click="setcat(idx)"
+          @click="updateCheckedCar(idx)"
         />
         <img
           :src="car.url"
@@ -161,6 +161,35 @@ export default {
     this.total();
   },
   methods: {
+    updateCheckedCar(idx) {
+      const carts = [...this.$store.state.cart];
+      carts[idx].checked = !carts[idx].checked;
+
+      this.$store.dispatch('updateProductChecked', carts);
+
+      this.total();
+    },
+
+    total() {
+      const value = this.$store.state.cart;
+      const totalProducts = value.map((cart) => {
+        if (cart.checked) {
+          return cart.price * cart.qty;
+        }
+        return 0;
+      });
+
+      const total = totalProducts.reduce((acc, p) => acc + p);
+
+      this.totalProduct = total.toLocaleString('pt-br', {
+        style: 'currency',
+        currency: 'BRL',
+      });
+      // let result = document.querySelector('#result');
+      // result.style.display = 'none';
+      // qtyItens.innerHTML = '<strong>:(0 item)</strong>';
+    },
+
     chekboxLength() {
       let checked = document.querySelectorAll(
         'input[type="checkbox"]:checked'
@@ -173,34 +202,11 @@ export default {
         console.log('0');
       }
     },
-    setcat(idx) {
-      const carts = [...this.$store.state.cart];
-      carts[idx].checked = !carts[idx].checked;
 
-      this.$store.dispatch('updateProductChecked', carts);
-
-      this.total();
-    },
-    total() {
-      const value = this.$store.state.cart;
-      const totalProducts = value.map((cart) => {
-        if (cart.checked) {
-          return cart.price * cart.qty;
-        }
-        return 0;
-      });
-      const total = totalProducts.reduce((acc, p) => acc + p);
-      this.totalProduct = total.toLocaleString('pt-br', {
-        style: 'currency',
-        currency: 'BRL',
-      });
-      // let result = document.querySelector('#result');
-      // result.style.display = 'none';
-      // qtyItens.innerHTML = '<strong>:(0 item)</strong>';
-    },
     reloading() {
       return document.location.reload();
     },
+
     deleteCart() {
       localStorage.removeItem('vuex');
       this.reloading();
