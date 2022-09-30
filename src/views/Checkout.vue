@@ -30,29 +30,41 @@
         <div class="envio">
             <div>Mensagem: <input type="text" placeholder="(Opcional) Deixe uma mensagem para o vendendor..."></div>
             <div class="opcaoDeEnvio">Opção de envio:</div>
-            <div>Entrega Padrão <div class="card-subtitle mb-2 text-muted">Receba entre {{firstDayFomated()}} de  {{firstMonthFomated()}} a {{lastDayFomated()}} de  {{lastMonthFomated()}}
+            <div>Entrega Padrão <div class="card-subtitle mb-2 text-muted">Receba entre {{firstDayFomated()}} de
+                    {{firstMonthFomated()}} a {{lastDayFomated()}} de {{lastMonthFomated()}}
                 </div>
             </div>
             <div>
-                <p class="fretes">R${{this.frete}}</p>
+                <p class="fretes">R${{this.shipping}}</p>
             </div>
         </div>
         <div class="totalItems">
             <p class="card-subtitle mb-2 text-muted">Total do pedido ({{$store.state.cart.length}} item){{totalProduct}}
             </p>
         </div>
-        <div>
-            <h4>Método de pagamento <v-btn  outlined color="error">Boleto Bancário</v-btn>
-                <v-btn color="error" outlined disabled>Cartão de Crédito</v-btn>
-                <v-btn outlined color="error">Pix</v-btn>
-            </h4>
+        <div class="paymentMethod" >
+            <h4>Método de pagamento</h4>
+            <v-card-text>
+      <v-chip-group
+        v-model="selection"
+        active-class="error"
+        column
+      >
+        <v-chip class="payment" :loading="loading" @click="remove"> Boleto Bancário</v-chip>
+
+        <v-chip disabled class="payment">Cartão de Crédito</v-chip>
+
+        <v-chip class="payment" :loading="loading"  @click="remove">Pix</v-chip>
+        </v-chip-group>      
+        </v-card-text>
+
         </div>
         <hr>
-        <p class="moedasEcommerce">Moedas Ecommerce Infinity a serem ganhas <i class="moedas">{{moedas}} Moedas</i></p>
+        <p class="moedasEcommerce">Moedas Ecommerce Infinity a serem ganhas <i class="moedas">{{coins}} Moedas</i></p>
         <hr>
         <div class="subtotal">
             <p class="one">Subtotal dos Produtos: <span class="four">{{totalSubtotal}}</span></p>
-            <p class="two">Total de envio: <span class="five">R${{frete}}</span></p>
+            <p class="two">Total de envio: <span class="five">R${{shipping}}</span></p>
             <p class="tree">Pagamento Total: <span class="six">{{totalProduct}} </span></p>
         </div>
         <v-container style="height: 100px;">
@@ -64,6 +76,7 @@
             </v-snackbar>
         </v-container>
         <button id="fazerPedido" class="btn btn-danger" @click="makeWish">Fazer Pedido</button>
+    
         <Footer />
     </div>
 
@@ -74,11 +87,13 @@ export default {
     name: "checkout",
     data() {
         return {
+            selection: 0,
+            loading: false,
             snackbar: false,
             vertical: true,
             totalProduct: [],
-            frete: 22.89,
-            moedas: 60,
+            shipping: 22.89,
+            coins: 60,
             totalSubtotal: []
         };
     },
@@ -87,62 +102,62 @@ export default {
         this.subtotal();
     },
     methods: {
-        firstDayFomated(){
+        async remove () {
+        this.loading = true
+
+        await new Promise(resolve => setTimeout(resolve, 3000))
+
+        this.loading = false
+      },
+        firstDayFomated() {
             let dateDay = new Date()
             let otherDay = new Date();
-            otherDay.setDate(dateDay.getDate() + 9); //
+            otherDay.setDate(dateDay.getDate() + 9); // Adiciona 9 dias ao mês
             let local = otherDay.getDate()
             return local;
         },
-        lastDayFomated(){
+        lastDayFomated() {
             let dateDay = new Date()
             let otherDay = new Date();
-            otherDay.setDate(dateDay.getDate() + 15); // Adiciona  dias ao mês
-            let local = otherDay.getDate()
-            return local;
+            otherDay.setDate(dateDay.getDate() + 15); // Adiciona 15 dias ao mês
+            let place = otherDay.getDate()
+            return place;
         },
-        firstMonthFomated(){
-            let dateMonth = new Date().toLocaleString('pt-br', {month: 'long'});
-            if(this.firstDayFomated() > 0 ){
-            let time = new Date();
-            let outraData = new Date();
-            outraData.setDate(time.getDate() + 31); // Adiciona 30 dias ao mês
-            let local = outraData.toLocaleString('pt-br', {month: 'long'});
-            console.log(local)
-            return local;
+        firstMonthFomated() {
+            let dateMonth = new Date().toLocaleString('pt-br', { month: 'long' });
+            if (this.firstDayFomated() > 0) {
+                let time = new Date();
+                let anotherDate = new Date();
+                anotherDate.setDate(time.getDate() + 31); // Adiciona 31 dias ao mês
+                let place = anotherDate.toLocaleString('pt-br', { month: 'long' });
+                console.log(place)
+                return place;
             } else {
                 console.log(dateMonth)
                 return dateMonth
             }
 
         },
-        lastMonthFomated(){
+        lastMonthFomated() {
 
-            let dateMonth = new Date().toLocaleString('pt-br', {month: 'long'});
-            if(this.firstDayFomated() >  0 ){
-            let time = new Date();
-            let outraData = new Date();
-            outraData.setDate(time.getDate() + 44); // Adiciona 30 dias ao mês
-            let local = outraData.toLocaleString('pt-br', {month: 'long'});
-            console.log(local)
-            return local;
+            let dateMonth = new Date().toLocaleString('pt-br', { month: 'long' });
+            if (this.firstDayFomated() > 0) {
+                let time = new Date();
+                let anotherDate = new Date();
+                anotherDate.setDate(time.getDate() + 44); // Adiciona 44 dias ao mês
+                let place = anotherDate.toLocaleString('pt-br', { month: 'long' });
+                console.log(place)
+                return place;
             } else {
                 console.log(dateMonth)
                 return dateMonth
             }
-
-            // let time = new Date();
-            // let outraData = new Date();
-            // outraData.setDate(time.getDate() + 31); // Adiciona 30 dias ao mês
-            // let local = outraData.toLocaleString('pt-br', {month: 'long'});
-            // return local;
-
         },
         total() {
             const value = this.$store.state.cart;
-            const totalProducts = value.map(cart => cart.price * cart.qty + this.frete);
-            const total = totalProducts.reduce((acc, p) => acc + p);
-            this.totalProduct = total.toLocaleString("pt-br", { style: "currency", currency: "BRL" });
+            const totalProducts = value.map(cart => cart.price * cart.qty + this.shipping);
+            const place = totalProducts.reduce((acc, p) => acc + p);
+            this.totalProduct = place.toLocaleString("pt-br", { style: "currency", currency: "BRL" });
         },
         subtotal() {
             let values = this.$store.state.cart;
@@ -169,6 +184,7 @@ export default {
     justify-content: start;
     background-color: white;
     margin-top: 2px;
+    display: flex;
 }
 
 .caixa {
@@ -201,8 +217,22 @@ export default {
     padding: 20px;
 }
 
+td:nth-last-child(1) {
+    text-align: right;
+}
+
+td:nth-last-child(2n) {
+    text-align: center;
+}
+
 th {
     text-align: left;
+}
+.paymentMethod{
+    display: flex;
+    align-items: center;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .title {
@@ -223,8 +253,7 @@ input {
 }
 
 .moedas {
-    color: #f6a700;
-    ;
+    color: darkgreen;
 }
 
 .moedasEcommerce {

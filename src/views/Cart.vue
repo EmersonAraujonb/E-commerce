@@ -1,6 +1,6 @@
 <template>
   <div class="cart">
-    <v-app-bar absolute color="white">
+    <v-app-bar fixed color="white">
 
       <v-toolbar-title>
         <router-link to="/"><img src=".././assets/infinity.png" alt="logo" class="logo" /></router-link>
@@ -70,7 +70,7 @@
             currency: 'BRL'}) }}</v-list-item-subtitle>
           </strong>
 
-          <div id="apagarItem">
+          <div id="deleteItem">
             <v-btn color="error" @click="deleteItem(cart)">Apagar</v-btn>
           </div>
           <hr>
@@ -94,7 +94,7 @@
           Selecionar Tudo (<strong>{{ $store.state.cart.length }}</strong>)</label>
         <p id="select2">Total<span id="qtyItens"><strong>{{$store.state.cart.length}} itens</strong></span> <span
             id="result"><strong>{{ this.totalProduct }}</strong></span></p>
-        <router-link to="/Checkout" class="btnContinuar"><v-btn id="continuar"
+        <router-link to="/Checkout" class="btnNext"><v-btn id="continuar"
             color="success">Continuar</v-btn></router-link>
       </div>
     </div>
@@ -134,8 +134,8 @@ export default {
     total() {
       const value = this.$store.state.cart;
       const totalProducts = value.map(cart => cart.price * cart.qty);
-      const total = totalProducts.reduce((acc, p) => acc + p);
-      this.totalProduct = total.toLocaleString("pt-br", { style: "currency", currency: "BRL" });
+      const place = totalProducts.reduce((acc, p) => acc + p);
+      this.totalProduct = place.toLocaleString("pt-br", { style: "currency", currency: "BRL" });
       let result = document.querySelector("#result");
       result.style.display = "none";
       qtyItens.innerHTML = "<strong>:(0 item)</strong>";
@@ -206,7 +206,7 @@ export default {
   width: 6%;
 }
 
-#apagarItem {
+#deleteItem {
   margin-left: 0;
   display: flex;
   flex-direction: row-reverse;
@@ -282,7 +282,7 @@ hr {
   margin-top: 10px;
 }
 
-.btnContinuar {
+.btnNext {
   display: flex;
   flex-direction: row-reverse;
   padding: 0;

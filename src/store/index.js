@@ -33,12 +33,20 @@ export default new Vuex.Store({
        const index = state.cart.findIndex(i => i.id == this.state.cart.id);
       state.cart.splice(index, 1);
 
-    }
+    },
+    //create mutation update cart
+    UPDATECART(state, payload) {
+      state.cart = [...payload];
+    },
   },
   actions: {
     removeItem({ commit }, cart) {
       commit('removeItem', cart)
-    }
+    },
+    //create action update cart
+    updateProductChecked({ commit }, carts) {
+      commit('UPDATECART', carts);
+    },
   },
   modules: {
   }
