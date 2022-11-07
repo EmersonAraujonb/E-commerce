@@ -1,82 +1,75 @@
 <template>
   <div class="cart">
-    <v-app-bar absolute color="white">
-      <v-toolbar-title>
-        <router-link to="/"
-          ><img src=".././assets/infinity.png" alt="logo" class="logo"
-        /></router-link>
-      </v-toolbar-title>
+    <v-card class="overflow-hidden">
+      <v-app-bar fixed color="white">
+        <v-toolbar-title>
+          <a href="/"><img src=".././assets/infinity.png" alt="logo" class="logo" /></a>
+        </v-toolbar-title>
+
+        <v-spacer></v-spacer>
+        <v-menu>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon x-small class="d-flex mr-7" v-bind="attrs" v-on="on">
+              <v-icon>mdi-account</v-icon>
+              <p>{{user}}</p>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-btn x-small @click="logout()" v-if="this.localStorageValue != null">Sair
+              <v-icon>mdi-logout</v-icon>
+            </v-btn>
+            <router-link to="login">
+            <v-btn x-small v-if="this.localStorageValue == null">Login
+              <v-icon>mdi-account-plus</v-icon>
+            </v-btn>
+          </router-link>
+            
+          </v-list>
+        </v-menu>
+        <v-btn icon title="Carrinho">
+          <router-link to="/cart">
+            <v-icon>mdi-cart</v-icon>
+          </router-link>
+        </v-btn>
+      </v-app-bar>
+
+      <v-container style="height: 100px"> </v-container>
+
+      <v-list-item-title class="text-h3 mb-10 m-8">
+        Carrinho de Compras
+      </v-list-item-title>
+
+      <div id="deleteCart" v-if="$store.state.cart != 0" style="text-align: right">
+        <v-btn color="error" @click="deleteCart"> Apagar carrinho </v-btn>
+      </div>
 
       <v-spacer></v-spacer>
 
-      <v-btn icon>
-        <router-link to="/cart">
-          <v-icon>mdi-cart</v-icon>
-        </router-link>
-      </v-btn>
-    </v-app-bar>
-
-    <v-container style="height: 100px"> </v-container>
-
-    <v-list-item-title class="text-h3 mb-10 m-8">
-      Carrinho de Compras
-    </v-list-item-title>
-
-    <div
-      id="deleteCart"
-      v-if="$store.state.cart != 0"
-      style="text-align: right"
-    >
-      <v-btn color="error" @click="deleteCart"> Apagar carrinho </v-btn>
-    </div>
-
-    <v-spacer></v-spacer>
-
-    <div v-if="$store.state.cart == 0" id="cartVazio" class="m-10">
-      <img
-        src="./../assets/carrinhoVazio.png"
-        style="width: 300px"
-        alt="carrinho de compras vazio"
-      />
-      <p>Seu carrinho de compras está vazio</p>
-      <a href="/" color="error">Ir Às Compras Agora</a>
-    </div>
-    <v-container style="height: 100px">
-      <v-snackbar v-model="snackbar" fixed top right color="success">
-        <span>Produto removido!</span>
-        <v-icon dark> mdi-checkbox-marked-circle </v-icon>
-      </v-snackbar>
-    </v-container>
+      <div v-if="$store.state.cart == 0" id="cartVazio" class="m-10">
+        <img src="./../assets/carrinhoVazio.png" style="width: 300px" alt="carrinho de compras vazio" />
+        <p>Seu carrinho de compras está vazio</p>
+        <a href="/" color="error">Ir Às Compras Agora</a>
+      </div>
+      <v-container style="height: 100px">
+        <v-snackbar v-model="snackbar" fixed top right color="success">
+          <span>Produto removido!</span>
+          <v-icon dark> mdi-checkbox-marked-circle </v-icon>
+        </v-snackbar>
+      </v-container>
+    </v-card>
     <p v-if="$store.state.cart != 0" class="phraseShipping">
       Compras com Cartão de Crédito e Cupons de Frete Grátis só no app.
     </p>
     <v-card class="mx-auto" max-width="944" outlined>
-      <v-list-item
-        three-line
-        v-for="(car, idx) in $store.state.cart"
-        :key="car.id"
-      >
-        <input
-          class="form-check-input"
-          type="checkbox"
-          name="checkbox"
-          :checked="car.checked"
-          @click="updateCheckedCar(idx)"
-        />
-        <img
-          :src="car.url"
-          style="margin-right: 10px; width: 150px; margin-bottom: 80px"
-        />
+      <v-list-item three-line v-for="(car, idx) in $store.state.cart" :key="car.id">
+        <input class="form-check-input" type="checkbox" name="checkbox" :checked="car.checked"
+          @click="updateCheckedCar(idx)" />
+        <img :src="car.url" style="margin-right: 10px; width: 150px; margin-bottom: 80px" />
 
         <v-list-item-content>
           <div id="items">
             <v-btn color="secondary">+</v-btn>
-            <input
-              class="form-control"
-              id="qtd"
-              type="text"
-              v-model="car.qty"
-            />
+            <input class="form-control" id="qtd" type="text" v-model="car.qty" />
             <v-btn color="secondary">-</v-btn>
           </div>
 
@@ -84,17 +77,15 @@
             {{ car.title }}
           </v-list-item-title>
           <v-list-item-subtitle class="pt-4">
-            {{ car.category }}</v-list-item-subtitle
-          >
+            {{ car.category }}</v-list-item-subtitle>
           <strong>
             <v-list-item-subtitle class="pt-4">
               {{
-                car.price.toLocaleString('pt-br', {
-                  style: 'currency',
-                  currency: 'BRL',
-                })
-              }}</v-list-item-subtitle
-            >
+              car.price.toLocaleString('pt-br', {
+              style: 'currency',
+              currency: 'BRL',
+              })
+              }}</v-list-item-subtitle>
           </strong>
 
           <div id="apagarItem">
@@ -102,15 +93,9 @@
           </div>
           <hr />
           <div class="card-footer">
-            <img
-              class="img-truck"
-              src="../../static/icons8-truck-32.png"
-              alt="img carrinho de frete"
-            />
-            <small
-              >Frete grátis em fretes até R$40,00 para pedidos acima de R$79,00
-              <a href="#" class="saibaMais">Saiba mais</a></small
-            >
+            <img class="img-truck" src="../../static/icons8-truck-32.png" alt="img carrinho de frete" />
+            <small>Frete grátis em até R$40,00 para pedidos acima de R$400,00
+              <a href="#" class="saibaMais">Saiba mais</a></small>
           </div>
 
           <hr />
@@ -119,30 +104,23 @@
     </v-card>
     <div v-if="$store.state.cart != 0" id="prices">
       <div class="form-check" id="selectTotal">
-        <v-btn color="primary" id="select" @click="checkboxTotal('result')"
-          >Clique</v-btn
-        >
+        <v-btn color="primary" id="select" @click="checkboxTotal('result')">Clique</v-btn>
         <label class="form-check-label" for="" id="select">
-          Selecionar Tudo (<strong>{{ $store.state.cart.length }}</strong
-          >)</label
-        >
+          Selecionar Tudo (<strong>{{ $store.state.cart.length }}</strong>)</label>
         <p id="select2">
-          Total<span id="qtyItens"
-            ><strong>{{ $store.state.cart.length }} itens</strong></span
-          >
-          <span id="result"
-            ><strong>{{ this.totalProduct }}</strong></span
-          >
+          Total<span id="qtyItens"><strong>({{ $store.state.cart.length }} item )</strong></span>
+          <span id="result"><strong>{{ this.totalProduct }}</strong></span>
         </p>
-        <router-link to="/Checkout" class="btnContinuar"
-          ><v-btn id="continuar" color="success">Continuar</v-btn></router-link
-        >
+        <router-link to="/Checkout" class="btnContinuar">
+          <v-btn id="continuar" color="success">Continuar</v-btn>
+        </router-link>
       </div>
     </div>
     <Footer />
   </div>
 </template>
 <script>
+import { getAuth, signOut } from "firebase/auth";
 import { mapState } from 'vuex';
 import Footer from '@/components/Footer.vue';
 export default {
@@ -150,6 +128,8 @@ export default {
     return {
       snackbar: false,
       totalProduct: [],
+      user: '',
+      localStorageValue: '',
     };
   },
   computed: {
@@ -158,7 +138,10 @@ export default {
     }),
   },
   mounted() {
+    this.user = localStorage.getItem('user')
+    this.localStorageValue = localStorage.getItem( 'token');
     this.total();
+    
   },
   methods: {
     updateCheckedCar(idx) {
@@ -178,9 +161,7 @@ export default {
         }
         return 0;
       });
-
       const total = totalProducts.reduce((acc, p) => acc + p);
-
       this.totalProduct = total.toLocaleString('pt-br', {
         style: 'currency',
         currency: 'BRL',
@@ -190,7 +171,7 @@ export default {
       // qtyItens.innerHTML = '<strong>:(0 item)</strong>';
     },
 
-    chekboxLength() {
+    checkboxLength() {
       let checked = document.querySelectorAll(
         'input[type="checkbox"]:checked'
       ).length;
@@ -208,7 +189,7 @@ export default {
     },
 
     deleteCart() {
-      localStorage.removeItem('vuex');
+      sessionStorage.removeItem('vuex')
       this.reloading();
     },
     deleteItem(cart) {
@@ -224,17 +205,32 @@ export default {
       let checked = document.querySelectorAll(
         'input[type="checkbox"]:checked'
       ).length;
-      if (checked !== 0) {
+      if (checked) {
         document.getElementById(el).style.display = 'block';
         qtyItens.style.display = 'block';
         qtyItens.innerHTML = `<strong>:(${this.$store.state.cart.length} itens):</strong>`;
+        console.log('1-item')
       } else {
         document.getElementById(el).style.display = 'none';
         qtyItens.innerHTML = '<strong>:(0 item)</strong>';
         qtyItens.style.display = 'block';
+        console.log('2-item')
       }
-      this.chekboxLength();
+      this.checkboxLength();
     },
+    logout() {
+      const auth = getAuth();
+      signOut(auth).then(() => {
+        // Sign-out successful.
+        this.$router.push({ name: 'login' }).catch(() => { })
+        localStorage.removeItem('user')
+        localStorage.removeItem('token')
+        sessionStorage.removeItem('vuex')
+      }).catch((error) => {
+        // An error happened.
+        alert(error)
+      });
+    }
   },
   components: { Footer },
 };
@@ -252,6 +248,7 @@ export default {
   align-items: center;
   margin-top: 50px;
 }
+
 .phraseShipping {
   text-align: center;
 }

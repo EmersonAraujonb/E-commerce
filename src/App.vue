@@ -14,5 +14,14 @@ export default {
   data: () => ({
     //
   }),
+  // mounted(){
+  //   this.$firebase.auth().onAuthStateChanged(user => {
+  //     window.uid = user ? user.uid : null
+
+  //     this.$router.push({
+  //       name: window.uid ? '' : 'login'
+  //     }).catch(()=>{});
+  //   })
+  // }
 };
 </script>

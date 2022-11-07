@@ -4,25 +4,54 @@
       <v-app-bar fixed color="white">
 
         <v-toolbar-title>
-          <router-link to="/"><img src=".././assets/infinity.png" alt="logo" class="logo" /></router-link>
+          <a href="/"><img src=".././assets/infinity.png" alt="logo" class="logo" /></a>
         </v-toolbar-title>
 
         <v-spacer></v-spacer>
 
-        <v-btn icon>
-          <v-icon>mdi-magnify</v-icon>
-        </v-btn>
         <v-text-field placeholder="Buscar" v-model="search"></v-text-field>
+        <v-icon>mdi-magnify</v-icon>
+
         <v-spacer></v-spacer>
-        <v-btn icon>
-          <router-link to="/cart">
-            <v-icon>mdi-cart</v-icon>
+     
+        <v-menu>
+          
+          <template v-slot:activator="{ on, attrs }">
+
+            <v-btn icon v-bind="attrs" v-on="on" title="Conta">
+              <v-list-item-avatar  >
+              <img class="imgAvatar"
+                :src="img"
+                alt="user"
+              >
+            </v-list-item-avatar>
+              <p class="user">{{user}}</p>
+
+            </v-btn>
+          </template>
+          <v-list>
+            <v-btn @click="logout()" v-if="this.localStorageValue != null">Sair
+              <v-icon>mdi-logout</v-icon>
+            </v-btn>
+            <router-link to="login">
+            <v-btn v-if="this.localStorageValue == null">Login
+              <v-icon>mdi-account-plus</v-icon>
+            </v-btn>
           </router-link>
+            
+          </v-list>
+        </v-menu>
+        
+        <v-btn icon title="Carrinho">
+          <a href="/cart">
+            <v-icon>mdi-cart</v-icon>
+          </a>
           <div id="qtyProduct" v-if="this.$store.state.cart.length != 0">{{this.$store.state.cart.length}}</div>
         </v-btn>
       </v-app-bar>
 
       <v-container style="height: 100px;">
+        
         <v-snackbar v-model="snackbar" fixed top right color="success">
           <span>Produto adicionado ao carrinho!</span>
           <v-icon dark>
@@ -76,6 +105,7 @@
 </template>
 
 <script>
+import { getAuth, signOut } from "firebase/auth";
 import Footer from '@/components/Footer.vue';
 export default {
   name: 'Home',
@@ -83,6 +113,13 @@ export default {
     return {
       snackbar: false,
       search: '',
+      user: '',
+      localStorageValue: '',
+      fav: true,
+      menu: false,
+      message: false,
+      hints: true,
+      img:'',
       products: [
         {
           id: 0,
@@ -270,7 +307,12 @@ export default {
         }
       ]
     }
-  
+
+  },
+  mounted() {
+    this.user = localStorage.getItem('user')
+    this.localStorageValue = localStorage.getItem( 'token');
+    this.img =  localStorage.getItem('img')
   },
   components: {
     Footer
@@ -292,6 +334,19 @@ export default {
       this.$store.commit('addProduct', product);
       this.snackbar = true
     },
+    logout() {
+      const auth = getAuth();
+      signOut(auth).then(() => {
+        // Sign-out successful.
+        this.$router.push({ name: 'login' }).catch(() => { })
+        localStorage.removeItem('user')
+        localStorage.removeItem('token')
+        sessionStorage.removeItem('vuex')
+      }).catch((error) => {
+        // An error happened.
+        alert(error)
+      });
+    }
 
   }
 
@@ -309,7 +364,15 @@ export default {
   width: 60px;
   height: 40px;
 }
-
+.imgAvatar{
+  display: flex;
+  width: 30px;
+  height: 30px;
+}
+.user{
+  display: flex;
+  margin-right: 40px;
+}
 #qtyProduct {
   display: flex;
   background-color: #000;

@@ -1,7 +1,7 @@
 <template>
     <div>
         <nav class="navCheckout">
-            <router-link to="/"><img src=".././assets/infinity.png" alt="logo" class="logo" /></router-link>
+            <a href="/"><img src=".././assets/infinity.png" alt="logo" class="logo" /></a>
             <div class="caixa"><span class="pipe">| </span>Caixa</div>
         </nav>
         <v-simple-table>
@@ -29,34 +29,79 @@
         </v-simple-table>
         <div class="envio">
             <div>Mensagem: <input type="text" placeholder="(Opcional) Deixe uma mensagem para o vendendor..."></div>
-            <div class="opcaoDeEnvio">Opção de envio:</div>
+            <div class="opcaoDeEnvio">
+  <div class="text-center">
+    <v-dialog
+      v-model="dialog"
+      width="500"
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          v-bind="attrs"
+          v-on="on"
+        >
+          Prazo de Entrega
+        </v-btn>
+      </template>
+
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2">
+          Prazo de Entrega
+        </v-card-title>
+
+        <v-card-text>
+            ENTREGA REGULAR: <br>
+
+Confira o prazo médio de entrega por localidade*: <br>
+
+- Região Nordeste: até 3 dias úteis (capitais) e 5 dias úteis (demais cidades)<br>
+- Região Norte:até 3 dias úteis (capitais) e 5 dias úteis (demais cidades) <br>
+- Região Centro-Oeste: até 3 dias úteis (capitais) e 5 dias úteis (demais cidades) <br>
+- Região Sudeste:  até 6 dias úteis (capitais) e 7 dias úteis (demais cidades) <br>
+- Região Sul: até 6 dias úteis (capitais) e 7 dias úteis (demais cidades)<br>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            text
+            @click="dialog = false"
+          >
+          FECHAR
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
+</div>
+            <div class="opcaoDeEnvio2 text-muted">Frete gratuito em todo território nacional</div>
+            <!-- <div class="opcaoDeEnvio">Opção de Envio:</div>
             <div>Entrega Padrão <div class="card-subtitle mb-2 text-muted">Receba entre {{firstDayFomated()}} de
                     {{firstMonthFomated()}} a {{lastDayFomated()}} de {{lastMonthFomated()}}
                 </div>
-            </div>
+            </div> -->
             <div>
-                <p class="fretes">R${{this.shipping}}</p>
+                <p class="fretes">{{this.shipping.toLocaleString("pt-br", { style: "currency", currency: "BRL" })}}</p>
             </div>
         </div>
         <div class="totalItems">
             <p class="card-subtitle mb-2 text-muted">Total do pedido ({{$store.state.cart.length}} item){{totalProduct}}
             </p>
         </div>
-        <div class="paymentMethod" >
+        <div class="paymentMethod">
             <h4>Método de pagamento</h4>
             <v-card-text>
-      <v-chip-group
-        v-model="selection"
-        active-class="error"
-        column
-      >
-        <v-chip class="payment" :loading="loading" @click="remove"> Boleto Bancário</v-chip>
+                <v-chip-group v-model="selection" active-class="error" column>
+                    <v-chip class="payment" :loading="loading" @click="remove"> Boleto Bancário</v-chip>
 
-        <v-chip disabled class="payment">Cartão de Crédito</v-chip>
+                    <v-chip disabled class="payment">Cartão de Crédito</v-chip>
 
-        <v-chip class="payment" :loading="loading"  @click="remove">Pix</v-chip>
-        </v-chip-group>      
-        </v-card-text>
+                    <v-chip class="payment" :loading="loading" @click="remove">Pix</v-chip>
+                </v-chip-group>
+            </v-card-text>
 
         </div>
         <hr>
@@ -64,7 +109,7 @@
         <hr>
         <div class="subtotal">
             <p class="one">Subtotal dos Produtos: <span class="four">{{totalSubtotal}}</span></p>
-            <p class="two">Total de envio: <span class="five">R${{shipping}}</span></p>
+            <p class="two">Total de envio: <span class="five">{{shipping.toLocaleString("pt-br", { style: "currency", currency: "BRL" })}}</span></p>
             <p class="tree">Pagamento Total: <span class="six">{{totalProduct}} </span></p>
         </div>
         <v-container style="height: 100px;">
@@ -75,11 +120,9 @@
                 </v-icon>
             </v-snackbar>
         </v-container>
-        <button id="fazerPedido" class="btn btn-danger" @click="makeWish">Fazer Pedido</button>
-    
+        <v-btn id="fazerPedido" color="error" @click="makeWish">Fazer Pedido</v-btn>
         <Footer />
     </div>
-
 </template>
 <script>
 import Footer from '@/components/Footer.vue';
@@ -87,12 +130,13 @@ export default {
     name: "checkout",
     data() {
         return {
+            dialog: false,
             selection: 0,
             loading: false,
             snackbar: false,
             vertical: true,
             totalProduct: [],
-            shipping: 22.89,
+            shipping: 0,
             coins: 60,
             totalSubtotal: []
         };
@@ -100,62 +144,19 @@ export default {
     mounted() {
         this.total();
         this.subtotal();
+
     },
     methods: {
-        async remove () {
-        this.loading = true
+        async remove() {
+            this.loading = true
 
-        await new Promise(resolve => setTimeout(resolve, 3000))
+            await new Promise(resolve => setTimeout(resolve, 3000))
 
-        this.loading = false
-      },
-        firstDayFomated() {
-            let dateDay = new Date()
-            let otherDay = new Date();
-            otherDay.setDate(dateDay.getDate() + 9); // Adiciona 9 dias ao mês
-            let local = otherDay.getDate()
-            return local;
-        },
-        lastDayFomated() {
-            let dateDay = new Date()
-            let otherDay = new Date();
-            otherDay.setDate(dateDay.getDate() + 15); // Adiciona 15 dias ao mês
-            let place = otherDay.getDate()
-            return place;
-        },
-        firstMonthFomated() {
-            let dateMonth = new Date().toLocaleString('pt-br', { month: 'long' });
-            if (this.firstDayFomated() > 0) {
-                let time = new Date();
-                let anotherDate = new Date();
-                anotherDate.setDate(time.getDate() + 31); // Adiciona 31 dias ao mês
-                let place = anotherDate.toLocaleString('pt-br', { month: 'long' });
-                console.log(place)
-                return place;
-            } else {
-                console.log(dateMonth)
-                return dateMonth
-            }
-
-        },
-        lastMonthFomated() {
-
-            let dateMonth = new Date().toLocaleString('pt-br', { month: 'long' });
-            if (this.firstDayFomated() > 0) {
-                let time = new Date();
-                let anotherDate = new Date();
-                anotherDate.setDate(time.getDate() + 44); // Adiciona 44 dias ao mês
-                let place = anotherDate.toLocaleString('pt-br', { month: 'long' });
-                console.log(place)
-                return place;
-            } else {
-                console.log(dateMonth)
-                return dateMonth
-            }
+            this.loading = false
         },
         total() {
             const value = this.$store.state.cart;
-            const totalProducts = value.map(cart => cart.price * cart.qty + this.shipping);
+            const totalProducts = value.map(cart => cart.price * cart.qty)
             const place = totalProducts.reduce((acc, p) => acc + p);
             this.totalProduct = place.toLocaleString("pt-br", { style: "currency", currency: "BRL" });
         },
@@ -165,8 +166,15 @@ export default {
             let totalValue = totalSub.reduce((acc, p) => acc + p);
             this.totalSubtotal = totalValue.toLocaleString("pt-br", { style: "currency", currency: "BRL" });
         },
+        snackbarMessage() {
+            this.snackbar = true
+        },
+        pushHome() {
+            this.$router.push("/");
+        },
         makeWish() {
-            this.snackbar = true;
+            setTimeout(this.snackbarMessage, 3000)
+            setTimeout(this.pushHome, 8000)
         }
     },
     components: { Footer }
@@ -197,11 +205,17 @@ export default {
 
 .opcaoDeEnvio {
     display: flex;
-    border-left-width: 1px;
+    border-left-width: 2px;
     border-left-style: solid;
     border-left-color: gray;
+    padding: 8px;
+    color: rgb(0, 0, 0);
+
+}
+.opcaoDeEnvio2 {
+    display: flex;
     padding: 10px;
-    color: rgb(255, 60, 0);
+    font-size: 10pt;
 
 }
 
@@ -209,12 +223,15 @@ export default {
     display: flex;
     justify-content: space-between;
     padding: 20px;
-    border: 1px solid gray;
+    border-bottom: 1px solid gray;
+    border-top: 1px solid gray;
+
 }
 
 .totalItems {
     text-align: right;
     padding: 20px;
+    border-bottom: 1px solid gray;
 }
 
 td:nth-last-child(1) {
@@ -228,7 +245,8 @@ td:nth-last-child(2n) {
 th {
     text-align: left;
 }
-.paymentMethod{
+
+.paymentMethod {
     display: flex;
     align-items: center;
     text-align: center;
@@ -272,11 +290,11 @@ input {
 }
 
 .two {
-    margin-right: 32px;
+    margin-right: 24px;
 }
 
 .tree {
-    margin-right: 5px;
+    margin-right: 28px;
 }
 
 .four {
@@ -289,6 +307,8 @@ input {
 
 .six {
     margin-left: 60px;
+    padding-left: 15px;
+    margin-right: -13px;
     font-size: 30px;
     color: firebrick;
 }

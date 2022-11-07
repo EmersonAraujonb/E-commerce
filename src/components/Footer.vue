@@ -50,7 +50,7 @@ export default {
         'mdi-snapchat',
         'mdi-twitch',
         'mdi-pinterest',
-        'mdi-youtube'
+        'mdi-youtube',
       ],
     }
 }
